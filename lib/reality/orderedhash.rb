@@ -23,6 +23,7 @@
 #    Andrew Johnson for his suggestions and fixes of Hash[],
 #    merge, to_a, inspect and shift
 module Reality
+
   class OrderedHash < ::Hash
     attr_accessor :order
 
@@ -32,7 +33,7 @@ module Reality
         if Hash === args[0]
           hsh.replace args[0]
         elsif (args.size % 2) != 0
-          raise ArgumentError, "odd number of elements for Hash"
+          raise ArgumentError, 'odd number of elements for Hash'
         else
           0.step(args.size - 1, 2) do |a|
             b = a + 1
@@ -54,14 +55,14 @@ module Reality
 
     alias orig_store store
 
-    def store a, b
+    def store(a, b)
       @order.push a unless has_key? a
       super a, b
     end
 
     alias []= store
 
-    def == hsh2
+    def ==(hsh2)
       return false if @order != hsh2.order
       super hsh2
     end
@@ -71,7 +72,7 @@ module Reality
       super
     end
 
-    def delete key
+    def delete(key)
       @order.delete key
       super
     end
@@ -124,12 +125,12 @@ module Reality
       hsh2
     end
 
-    def reject &block
-      self.dup.delete_if &block
+    def reject(&block)
+      self.dup.delete_if(&block)
     end
 
-    def reject! &block
-      hsh2 = reject &block
+    def reject!(&block)
+      hsh2 = reject(&block)
       self == hsh2 ? nil : hsh2
     end
 
@@ -143,7 +144,7 @@ module Reality
       key ? [key, delete(key)] : super
     end
 
-    def unshift k, v
+    def unshift(k, v)
       unless self.include? k
         @order.unshift k
         orig_store(k, v)
@@ -153,7 +154,7 @@ module Reality
       end
     end
 
-    def push k, v
+    def push(k, v)
       unless self.include? k
         @order.push k
         orig_store(k, v)
@@ -180,8 +181,8 @@ module Reality
 
     def inspect
       ary = []
-      each { |k, v| ary << k.inspect + "=>" + v.inspect }
-      '{' + ary.join(", ") + '}'
+      each { |k, v| ary << k.inspect + '=>' + v.inspect }
+      '{' + ary.join(', ') + '}'
     end
 
     def update(hsh2)
@@ -192,7 +193,7 @@ module Reality
     alias :merge! update
 
     def merge(hsh2)
-      self.dup.update(hsh2)
+      self.dup(update(hsh2))
     end
 
     def select
@@ -211,7 +212,7 @@ module Reality
 
     attr_accessor 'to_yaml_style'
 
-    def yaml_inline= bool
+    def yaml_inline=(bool)
       if respond_to?('to_yaml_style')
         self.to_yaml_style = :inline
       else
@@ -237,7 +238,7 @@ module Reality
       @__yaml_inline = bool
     end
 
-    def yaml_inline!()
+    def yaml_inline!
       self.yaml_inline = true
     end
 
